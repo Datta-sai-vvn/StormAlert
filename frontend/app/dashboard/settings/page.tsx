@@ -42,7 +42,7 @@ export default function SettingsPage() {
             setSettings(res.data)
         } catch (error) {
             console.error("Failed to fetch settings", error)
-            toast({ title: "Error", description: "Failed to load settings", variant: "destructive" })
+            toast({ title: "Error", description: "Failed to load settings" })
         } finally {
             setLoading(false)
         }
@@ -57,7 +57,7 @@ export default function SettingsPage() {
             await api.put("/settings/update", settings)
             toast({ title: "Success", description: "Settings saved successfully ✔" })
         } catch (error) {
-            toast({ title: "Error", description: "Failed to save settings", variant: "destructive" })
+            toast({ title: "Error", description: "Failed to save settings" })
         }
     }
 
@@ -67,7 +67,7 @@ export default function SettingsPage() {
             setSettings(res.data)
             toast({ title: "Preset Applied", description: `Applied ${name} mode settings.` })
         } catch (error) {
-            toast({ title: "Error", description: "Failed to apply preset", variant: "destructive" })
+            toast({ title: "Error", description: "Failed to apply preset" })
         }
     }
 
@@ -76,7 +76,7 @@ export default function SettingsPage() {
             await api.post(`/settings/test-notification?channel=${channel}`)
             toast({ title: "Test Sent", description: `Test alert sent to ${channel}` })
         } catch (error) {
-            toast({ title: "Error", description: "Failed to send test alert", variant: "destructive" })
+            toast({ title: "Error", description: "Failed to send test alert" })
         }
     }
 

@@ -66,7 +66,7 @@ export default function ActivityPage() {
             setStats(statsRes.data)
         } catch (error) {
             console.error("Failed to fetch activity", error)
-            toast({ title: "Error", description: "Failed to load activity logs", variant: "destructive" })
+            toast({ title: "Error", description: "Failed to load activity logs" })
         } finally {
             setLoading(false)
         }
@@ -78,7 +78,7 @@ export default function ActivityPage() {
             setLogs(logs.filter((l: any) => l._id !== id))
             toast({ title: "Deleted", description: "Log entry deleted" })
         } catch (error) {
-            toast({ title: "Error", description: "Failed to delete log", variant: "destructive" })
+            toast({ title: "Error", description: "Failed to delete log" })
         }
     }
 
@@ -93,7 +93,7 @@ export default function ActivityPage() {
             link.click()
             link.remove()
         } catch (error) {
-            toast({ title: "Error", description: "Failed to export logs", variant: "destructive" })
+            toast({ title: "Error", description: "Failed to export logs" })
         }
     }
 
