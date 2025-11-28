@@ -6,6 +6,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: https://dv6280.online/api
+        NEXT_PUBLIC_WS_URL: wss://dv6280.online/ws
     restart: always
     environment:
       - NEXT_PUBLIC_API_URL=https://dv6280.online/api
