@@ -15,3 +15,4 @@ websockets
 redis>=5.0.0
 sentry-sdk>=1.30.0
 email-validator
+argon2-cffi
