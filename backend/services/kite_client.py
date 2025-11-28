@@ -23,7 +23,7 @@ class KiteClient:
                     raise RuntimeError("KiteConnect failed in Production Mode. Cannot switch to Mock.")
                 self.mock_mode = True
         else:
-        else:
+
             print("Warning: KiteConnect credentials missing. System will wait for Admin Token.")
             self.mock_mode = False # Do NOT enable mock mode in production
             self.kite = None
