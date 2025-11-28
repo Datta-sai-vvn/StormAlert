@@ -32,8 +32,6 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db = Depends(get_database)):
@@ -70,6 +68,9 @@ async def register(user: UserCreate, db = Depends(get_database)):
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
+    if len(user.password) > 72:
+        raise HTTPException(status_code=400, detail="Password must be less than 72 characters")
+
     hashed_password = get_password_hash(user.password)
     
     # Check if this is the first user
