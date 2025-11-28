@@ -23,13 +23,10 @@ class KiteClient:
                     raise RuntimeError("KiteConnect failed in Production Mode. Cannot switch to Mock.")
                 self.mock_mode = True
         else:
-            if os.getenv("PRODUCTION_MODE", "false").lower() == "true":
-                print("Warning: KiteConnect credentials missing. System will be OFFLINE (Production Mode).")
-                # Do NOT enable mock mode in production
-                raise RuntimeError("KiteConnect failed in Production Mode. Cannot switch to Mock.")
-            else:
-                print("Warning: KiteConnect credentials missing. Switching to MOCK MODE (Dev Only).")
-                self.mock_mode = True
+        else:
+            print("Warning: KiteConnect credentials missing. System will wait for Admin Token.")
+            self.mock_mode = False # Do NOT enable mock mode in production
+            self.kite = None
 
     def fetch_instruments(self):
         print("Fetching instruments...")
