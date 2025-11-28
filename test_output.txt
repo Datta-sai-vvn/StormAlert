@@ -1,0 +1,214 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.10.6, pytest-8.3.4, pluggy-1.5.0
+rootdir: C:\Users\dv628\OneDrive - University of Illinois Chicago\Desktop\Personals\Balaji Bava\StormAlert
+plugins: anyio-4.8.0, Faker-35.0.0
+collected 4 items
+
+backend\tests\test_admin_token.py .F..                                   [100%]
+
+================================== FAILURES ===================================
+_______________________ test_admin_submit_token_success _______________________
+
+mock_ticker = <MagicMock name='ticker_service' id='2707889195232'>
+mock_kite = <MagicMock name='KiteConnect' id='2707889201712'>, admin_auth = None
+mock_db = <MagicMock id='2707888646048'>
+
+    @patch("backend.routers.admin.KiteConnect")
+    @patch("backend.routers.admin.ticker_service")
+    def test_admin_submit_token_success(mock_ticker, mock_kite, admin_auth, mock_db):
+        # Mock DB async calls
+        f_update = asyncio.Future()
+        f_update.set_result(None)
+        mock_db["system_state"].update_many.return_value = f_update
+    
+        f_insert = asyncio.Future()
+        f_insert.set_result(None)
+        mock_db["system_state"].insert_one.return_value = f_insert
+    
+        # Mock Kite
+        mock_k = MagicMock()
+        mock_k.generate_session.return_value = {
+            "access_token": "access_token_123",
+            "public_token": "public_token_123"
+        }
+        mock_kite.return_value = mock_k
+    
+        payload = {
+            "request_token_url": "https://kite.trade/?request_token=valid_token_123&action=login"
+        }
+    
+>       response = client.post("/api/admin/submit-request-token", json=payload)
+
+backend\tests\test_admin_token.py:88: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\testclient.py:633: in post
+    return super().post(
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\httpx\_client.py:1144: in post
+    return self.request(
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\testclient.py:516: in request
+    return super().request(
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\testclient.py:398: in handle_request
+    raise exc
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\testclient.py:395: in handle_request
+    portal.call(self.app, scope, receive, send)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\anyio\from_thread.py:290: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+C:\Program Files\Python310\lib\concurrent\futures\_base.py:458: in result
+    return self.__get_result()
+C:\Program Files\Python310\lib\concurrent\futures\_base.py:403: in __get_result
+    raise self._exception
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\anyio\from_thread.py:221: in _call_func
+    retval = await retval_or_awaitable
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\fastapi\applications.py:1054: in __call__
+    await super().__call__(scope, receive, send)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\applications.py:123: in __call__
+    await self.middleware_stack(scope, receive, send)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\middleware\cors.py:85: in __call__
+    await self.app(scope, receive, send)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\middleware\exceptions.py:65: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\_exception_handler.py:64: in wrapped_app
+    raise exc
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    await app(scope, receive, sender)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\routing.py:756: in __call__
+    await self.middleware_stack(scope, receive, send)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\routing.py:776: in app
+    await route.handle(scope, receive, send)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\routing.py:297: in handle
+    await self.app(scope, receive, send)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\routing.py:77: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\_exception_handler.py:64: in wrapped_app
+    raise exc
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    await app(scope, receive, sender)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\starlette\routing.py:72: in app
+    response = await func(request)
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\fastapi\routing.py:278: in app
+    raw_response = await run_endpoint_function(
+C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\fastapi\routing.py:191: in run_endpoint_function
+    return await dependant.call(**values)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+submission = TokenSubmission(request_token_url='https://kite.trade/?request_token=valid_token_123&action=login')
+admin = UserInDB(email='admin@example.com', role='admin', id=None, hashed_password='hash', created_at=datetime.datetime(2025, 11, 27, 17, 47, 19, 225027))
+db = <MagicMock id='2707888646048'>
+
+    @router.post("/submit-request-token")
+    async def submit_request_token(submission: TokenSubmission, admin = Depends(get_current_admin), db = Depends(get_database)):
+        # 1. Extract request_token from URL
+        try:
+            parsed = urllib.parse.urlparse(submission.request_token_url)
+            qs = urllib.parse.parse_qs(parsed.query)
+            request_token = qs.get("request_token", [None])[0]
+    
+            if not request_token:
+                 # Try to see if the user just pasted the token itself
+                if len(submission.request_token_url) > 20 and "http" not in submission.request_token_url:
+                    request_token = submission.request_token_url
+                else:
+                    raise ValueError("No request_token found in URL")
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Invalid URL format: {str(e)}")
+    
+        # 2. Exchange for Access Token
+        api_key = os.getenv("KITE_API_KEY")
+        api_secret = os.getenv("KITE_API_SECRET")
+    
+        if not api_key or not api_secret:
+            raise HTTPException(status_code=500, detail="Server misconfiguration: Missing Kite API credentials")
+    
+        try:
+            kite = KiteConnect(api_key=api_key)
+            data = kite.generate_session(request_token, api_secret=api_secret)
+            access_token = data["access_token"]
+            public_token = data.get("public_token")
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Failed to verify token with Zerodha: {str(e)}")
+    
+        # 3. Store in DB
+        # Invalidate old tokens
+        await db["system_state"].update_many({}, {"$set": {"status": "OFFLINE"}})
+    
+        new_state = SystemState(
+            access_token=access_token,
+            request_token=request_token,
+            public_token=public_token,
+            date_received=datetime.utcnow(),
+            expires_at=datetime.utcnow().replace(hour=23, minute=59, second=59, microsecond=0), # Expire at end of today (UTC)
+            status="ONLINE"
+        )
+    
+        await db["system_state"].insert_one(new_state.model_dump(by_alias=True, exclude={"id"}))
+    
+        # 4. Update Services
+        # Update Kite Client
+        kite_client.set_access_token(access_token)
+    
+        # Restart Ticker
+>       await ticker_service.restart(access_token)
+E       TypeError: object MagicMock can't be used in 'await' expression
+
+backend\routers\admin.py:70: TypeError
+---------------------------- Captured stdout call -----------------------------
+KiteClient access token updated. Mock Mode: False
+============================== warnings summary ===============================
+backend\main.py:35
+  C:\Users\dv628\OneDrive - University of Illinois Chicago\Desktop\Personals\Balaji Bava\StormAlert\backend\main.py:35: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+..\..\..\..\..\AppData\Roaming\Python\Python310\site-packages\fastapi\applications.py:4495
+..\..\..\..\..\AppData\Roaming\Python\Python310\site-packages\fastapi\applications.py:4495
+  C:\Users\dv628\AppData\Roaming\Python\Python310\site-packages\fastapi\applications.py:4495: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)
+
+backend\main.py:112
+  C:\Users\dv628\OneDrive - University of Illinois Chicago\Desktop\Personals\Balaji Bava\StormAlert\backend\main.py:112: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+backend/tests/test_admin_token.py::test_system_status_offline_initially
+  C:\Users\dv628\OneDrive - University of Illinois Chicago\Desktop\Personals\Balaji Bava\StormAlert\backend\tests\test_admin_token.py:55: DeprecationWarning: There is no current event loop
+    f = asyncio.Future()
+
+backend/tests/test_admin_token.py::test_admin_submit_token_success
+  C:\Users\dv628\OneDrive - University of Illinois Chicago\Desktop\Personals\Balaji Bava\StormAlert\backend\tests\test_admin_token.py:68: DeprecationWarning: There is no current event loop
+    f_update = asyncio.Future()
+
+backend/tests/test_admin_token.py::test_admin_submit_token_success
+  C:\Users\dv628\OneDrive - University of Illinois Chicago\Desktop\Personals\Balaji Bava\StormAlert\backend\tests\test_admin_token.py:72: DeprecationWarning: There is no current event loop
+    f_insert = asyncio.Future()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED backend/tests/test_admin_token.py::test_admin_submit_token_success - T...
+=================== 1 failed, 3 passed, 7 warnings in 1.67s ===================
