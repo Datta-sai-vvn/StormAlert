@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.services.db import db
 from backend.routers import auth, stocks, settings, dashboard, websocket, activity, admin
 from datetime import datetime
+import asyncio
 
 app = FastAPI()
 
