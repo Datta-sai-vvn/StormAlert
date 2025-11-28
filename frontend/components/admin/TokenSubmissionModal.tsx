@@ -31,7 +31,7 @@ export function TokenSubmissionModal() {
 
         setSubmitting(true)
         try {
-            const res = await fetch("http://localhost:8002/api/admin/submit-request-token", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/submit-request-token`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
