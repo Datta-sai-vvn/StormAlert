@@ -28,6 +28,7 @@ services:
       - DATABASE_URL=mongodb://mongodb:27017/stormalert
       - REDIS_URL=redis://redis:6379/0
       - ALLOWED_ORIGINS=https://dv6280.online
+      - JWT_SECRET=prod_secret_9d8f7a6c5b4e3d2a1f0e9d8c7b6a5f4e3d2a1f0e9d8c7b6a5f4e3d2a1f0e9d8c
     depends_on:
       - mongodb
       - redis
@@ -42,6 +43,7 @@ services:
       - PRODUCTION_MODE=true
       - DATABASE_URL=mongodb://mongodb:27017/stormalert
       - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET=prod_secret_9d8f7a6c5b4e3d2a1f0e9d8c7b6a5f4e3d2a1f0e9d8c7b6a5f4e3d2a1f0e9d8c
       - SMTP_SERVER=${SMTP_SERVER}
       - SMTP_USERNAME=${SMTP_USERNAME}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
