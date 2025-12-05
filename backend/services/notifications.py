@@ -56,12 +56,17 @@ class NotificationService:
             return
         
         def _send():
+            # Ensure 'whatsapp:' prefix
+            dest = to_number
+            if not dest.startswith("whatsapp:"):
+                dest = f"whatsapp:{dest}"
+
             self.twilio_client.messages.create(
                 body=message,
                 from_=self.twilio_from,
-                to=to_number
+                to=dest
             )
-            print(f"WhatsApp sent to {to_number}")
+            print(f"WhatsApp sent to {dest}")
 
         loop = asyncio.get_running_loop()
         # Wrap in retry
