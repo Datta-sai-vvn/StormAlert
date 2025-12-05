@@ -172,12 +172,18 @@ class TickerService:
 
     def on_ticks(self, ws, ticks):
         """Called by KiteTicker in a separate thread"""
+        # DEBUG LOG
+        if len(ticks) > 0:
+            print(f"DEBUG: Received {len(ticks)} ticks. First: {ticks[0]['instrument_token']} -> {ticks[0]['last_price']}")
+
         # 1. Process Logic
         self.process_ticks(ticks)
 
         # 2. Broadcast (Schedule on main loop)
         if self.connection_manager and self.loop:
             asyncio.run_coroutine_threadsafe(self.broadcast_ticks(ticks), self.loop)
+        else:
+            print("DEBUG: Connection Manager or Loop not ready for broadcast")
 
         # 3. Callback (Schedule on main loop if it's async, or run if sync)
         # Assuming on_ticks_callback is async (alert engine)
