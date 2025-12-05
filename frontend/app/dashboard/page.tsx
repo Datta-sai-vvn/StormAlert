@@ -67,7 +67,6 @@ export default function DashboardPage() {
 
         socket.onmessage = (event) => {
             try {
-                console.log("Dashboard WS Message:", event.data) // DEBUG LOG
                 const message = JSON.parse(event.data)
 
                 if (message.type === "TICK_UPDATE") {

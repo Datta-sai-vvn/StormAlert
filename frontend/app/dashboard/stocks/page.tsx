@@ -68,14 +68,12 @@ export default function StocksPage() {
 
         socket.onmessage = (event) => {
             try {
-                console.log("WS Message Received:", event.data) // DEBUG LOG
                 const message = JSON.parse(event.data)
                 if (message.type === "TICK_UPDATE") {
-                    console.log("Processing TICK_UPDATE:", message.data) // DEBUG LOG
                     updatePrices(message.data)
                 }
             } catch (e) {
-                console.error("WS Error parsing message", e)
+                console.error("WS Error", e)
             }
         }
 
