@@ -21,8 +21,9 @@ class ConnectionManager:
         for connection in self.active_connections:
             try:
                 await connection.send_json(message)
-            except Exception:
+            except Exception as e:
                 # Handle broken connections
+                print(f"Error broadcasting to client: {e}")
                 pass
 
 manager = ConnectionManager()

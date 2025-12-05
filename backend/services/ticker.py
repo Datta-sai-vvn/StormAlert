@@ -99,9 +99,19 @@ class TickerService:
         if self.connection_manager:
             try:
                 # Standard Tick Update
+                # Convert datetime objects to strings for JSON serialization
+                serializable_ticks = []
+                for tick in ticks:
+                    new_tick = tick.copy()
+                    if "timestamp" in new_tick and isinstance(new_tick["timestamp"], datetime):
+                        new_tick["timestamp"] = new_tick["timestamp"].isoformat()
+                    if "last_trade_time" in new_tick and isinstance(new_tick["last_trade_time"], datetime):
+                        new_tick["last_trade_time"] = new_tick["last_trade_time"].isoformat()
+                    serializable_ticks.append(new_tick)
+
                 payload = {
                     "type": "TICK_UPDATE",
-                    "data": ticks
+                    "data": serializable_ticks
                 }
                 await self.connection_manager.broadcast(payload)
                 
