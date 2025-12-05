@@ -32,6 +32,9 @@ services:
       - JWT_SECRET=prod_secret_9d8f7a6c5b4e3d2a1f0e9d8c7b6a5f4e3d2a1f0e9d8c
       - KITE_API_KEY=${KITE_API_KEY}
       - KITE_API_SECRET=${KITE_API_SECRET}
+      - TWILIO_SID=${TWILIO_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_FROM_NUMBER=${TWILIO_FROM_NUMBER}
     depends_on:
       - mongodb
       - redis

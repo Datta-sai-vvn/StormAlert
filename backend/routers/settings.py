@@ -71,9 +71,33 @@ async def test_notification(
     current_user: UserInDB = Depends(get_current_user),
     db = Depends(get_database)
 ):
-    # In a real app, this would trigger the notification service
-    # For now, we just return success
-    return {"status": "success", "message": f"Test notification sent to {channel}"}
+    from backend.services.notifications import notification_service
+    
+    settings = await db["settings"].find_one({"user_id": current_user.id})
+    if not settings:
+        raise HTTPException(status_code=404, detail="Settings not found")
+        
+    settings_obj = SettingsInDB(**settings)
+    
+    try:
+        if channel == "whatsapp":
+            if not settings_obj.whatsapp_number:
+                raise HTTPException(status_code=400, detail="WhatsApp number not configured")
+            await notification_service.send_whatsapp(settings_obj.whatsapp_number, "🔔 StormAlert: This is a test message from your system.")
+            
+        elif channel == "email":
+            if not settings_obj.email_address:
+                raise HTTPException(status_code=400, detail="Email address not configured")
+            await notification_service.send_email(settings_obj.email_address, "StormAlert Test", "This is a test notification.")
+            
+        elif channel == "telegram":
+            if not settings_obj.telegram_chat_id:
+                raise HTTPException(status_code=400, detail="Telegram Chat ID not configured")
+            await notification_service.send_telegram(settings_obj.telegram_chat_id, "🔔 StormAlert: Test message.")
+            
+        return {"status": "success", "message": f"Test notification sent to {channel}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to send test: {str(e)}")
 
 @router.post("/reset")
 async def reset_settings(
