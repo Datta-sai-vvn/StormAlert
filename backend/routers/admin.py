@@ -65,6 +65,7 @@ async def submit_request_token(submission: TokenSubmission, admin = Depends(get_
     # 4. Update Services
     # Update Kite Client
     kite_client.set_access_token(access_token)
+    kite_client.fetch_instruments()
     
     # Restart Ticker
     await ticker_service.restart(access_token)
