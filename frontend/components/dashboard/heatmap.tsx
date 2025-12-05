@@ -30,7 +30,7 @@ export const Heatmap = React.memo(function Heatmap({ data }: HeatmapProps) {
                     title={`${item.symbol}: ${item.change}%`}
                 >
                     <span className="text-xs font-bold truncate w-full text-center">{item.symbol}</span>
-                    <span className="text-xs">{item.change > 0 ? "+" : ""}{item.change}%</span>
+                    <span className="text-xs">{item.change > 0 ? "+" : ""}{item.change.toFixed(2)}%</span>
                 </div>
             ))}
             {data.length === 0 && (

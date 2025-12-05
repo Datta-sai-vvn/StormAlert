@@ -22,7 +22,7 @@ export const StockRow = React.memo(function StockRow({ stock }: StockRowProps) {
                 <Sparkline data={stock.history} width={100} height={30} />
             </td>
             <td className={`px-4 py-3 font-bold ${stock.change > 0 ? "text-green-600" : "text-red-600"}`}>
-                {stock.change > 0 ? "+" : ""}{stock.change}%
+                {stock.change > 0 ? "+" : ""}{stock.change.toFixed(2)}%
             </td>
         </tr>
     )
