@@ -67,6 +67,7 @@ export default function DashboardPage() {
 
         socket.onmessage = (event) => {
             try {
+                console.log("Dashboard WS Message:", event.data) // DEBUG LOG
                 const message = JSON.parse(event.data)
 
                 if (message.type === "TICK_UPDATE") {
@@ -77,6 +78,14 @@ export default function DashboardPage() {
             } catch (e) {
                 console.error("WS Error", e)
             }
+        }
+
+        socket.onerror = (error) => {
+            console.error("Dashboard WS Error:", error)
+        }
+
+        socket.onclose = (event) => {
+            console.log("Dashboard WS Closed:", event.code, event.reason)
         }
 
         ws.current = socket

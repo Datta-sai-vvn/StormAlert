@@ -68,13 +68,23 @@ export default function StocksPage() {
 
         socket.onmessage = (event) => {
             try {
+                console.log("WS Message Received:", event.data) // DEBUG LOG
                 const message = JSON.parse(event.data)
                 if (message.type === "TICK_UPDATE") {
+                    console.log("Processing TICK_UPDATE:", message.data) // DEBUG LOG
                     updatePrices(message.data)
                 }
             } catch (e) {
-                console.error("WS Error", e)
+                console.error("WS Error parsing message", e)
             }
+        }
+
+        socket.onerror = (error) => {
+            console.error("WebSocket Error:", error)
+        }
+
+        socket.onclose = (event) => {
+            console.log("WebSocket Closed:", event.code, event.reason)
         }
 
         ws.current = socket
