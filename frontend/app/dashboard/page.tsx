@@ -59,7 +59,7 @@ export default function DashboardPage() {
         fetchData()
 
         // WebSocket
-        const socket = new WebSocket("ws://localhost:8002/ws/stocks")
+        const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}/stocks`)
 
         socket.onopen = () => {
             console.log("Dashboard WS Connected")
