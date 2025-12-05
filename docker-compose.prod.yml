@@ -53,6 +53,9 @@ services:
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - KITE_API_KEY=${KITE_API_KEY}
       - KITE_API_SECRET=${KITE_API_SECRET}
+      - TWILIO_SID=${TWILIO_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_FROM_NUMBER=${TWILIO_FROM_NUMBER}
     depends_on:
       - redis
       - mongodb
