@@ -97,6 +97,7 @@ class TickerService:
     async def broadcast_ticks(self, ticks):
         """Async broadcast method"""
         if self.connection_manager:
+            try:
                 # Standard Tick Update
                 # Use jsonable_encoder to handle all datetime/decimal conversions automatically
                 from fastapi.encoders import jsonable_encoder
