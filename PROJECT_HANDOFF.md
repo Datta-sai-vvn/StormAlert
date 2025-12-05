@@ -87,6 +87,9 @@ StormAlert/
 ### Required Environment Variables (.env)
 - `KITE_API_KEY`: Your Zerodha Kite Connect API Key
 - `KITE_API_SECRET`: Your Zerodha Kite Connect API Secret
+- `TWILIO_SID`: Your Twilio Account SID (for WhatsApp)
+- `TWILIO_AUTH_TOKEN`: Your Twilio Auth Token
+- `TWILIO_FROM_NUMBER`: Your Twilio WhatsApp Number (e.g., `whatsapp:+14155238886`)
 - `JWT_SECRET`: Secret key for token generation
 - `MONGODB_URI`: Connection string for MongoDB
 ```
