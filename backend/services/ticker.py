@@ -97,21 +97,13 @@ class TickerService:
     async def broadcast_ticks(self, ticks):
         """Async broadcast method"""
         if self.connection_manager:
-            try:
                 # Standard Tick Update
-                # Convert datetime objects to strings for JSON serialization
-                serializable_ticks = []
-                for tick in ticks:
-                    new_tick = tick.copy()
-                    if "timestamp" in new_tick and isinstance(new_tick["timestamp"], datetime):
-                        new_tick["timestamp"] = new_tick["timestamp"].isoformat()
-                    if "last_trade_time" in new_tick and isinstance(new_tick["last_trade_time"], datetime):
-                        new_tick["last_trade_time"] = new_tick["last_trade_time"].isoformat()
-                    serializable_ticks.append(new_tick)
-
+                # Use jsonable_encoder to handle all datetime/decimal conversions automatically
+                from fastapi.encoders import jsonable_encoder
+                
                 payload = {
                     "type": "TICK_UPDATE",
-                    "data": serializable_ticks
+                    "data": jsonable_encoder(ticks)
                 }
                 await self.connection_manager.broadcast(payload)
                 
