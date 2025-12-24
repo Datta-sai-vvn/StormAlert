@@ -157,15 +157,31 @@ class AlertEngine:
         if last_time and (datetime.utcnow() - last_time).total_seconds() < settings.cooldown_minutes * 60:
             return # In cooldown
 
-        # Log Alert
+        # Select emoji and phrase based on type
+        if type == AlertType.DIP:
+            emoji = "📉"
+            action = "Price Dropped"
+            phrase = "This stock has dropped significantly! Act accordingly."
+        else: # Spike
+            emoji = "📈"
+            action = "Price Spiked"
+            phrase = "Momentum is building up! Fast."
+
+        formatted_message = (
+            f"🚨 *StormAlert: {symbol}*\n"
+            f"{emoji} *{action}:* {change:.2f}%\n"
+            f"💰 *Current Price:* ₹{price:.2f}\n"
+            f"_{phrase}_"
+        )
+        
         alert_log = {
-            "user_id": user_id, # Storing as string for now, or convert to ObjectId if needed
+            "user_id": user_id, 
             "stock_symbol": symbol,
             "price": price,
             "change_percent": change,
             "alert_type": type,
             "timestamp": datetime.utcnow(),
-            "message": f"{symbol} {type} detected! {change:.2f}% movement."
+            "message": formatted_message
         }
         
         # Batch insert

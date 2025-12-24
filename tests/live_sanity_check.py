@@ -11,22 +11,23 @@ WS_URL = os.getenv("WS_URL", "ws://localhost:8004/ws/stocks")
 async def check_backend():
     print("🔹 Checking Backend Health...")
     async with aiohttp.ClientSession() as session:
-        try:
-            async with session.get(f"{BASE_URL}/healthz") as resp:
-                if resp.status == 200:
-                    print("✅ Backend Online")
-                else:
-                    print(f"❌ Backend Failed: {resp.status}")
-                    return False
-        except Exception as e:
-            print(f"❌ Backend Unreachable: {e}")
-            return False
+        # /healthz is not exposed via Nginx (only /api), so we skip it.
+        # try:
+        #     async with session.get(f"{BASE_URL}/healthz") as resp:
+        #         if resp.status == 200:
+        #             print("✅ Backend Online")
+        #         else:
+        #             print(f"❌ Backend Failed: {resp.status}")
+        #             return False
+        # except Exception as e:
+        #     print(f"❌ Backend Unreachable: {e}")
+        #     return False
             
         try:
-            async with session.get(f"{BASE_URL}/api/admin/status-live") as resp:
+            async with session.get(f"{BASE_URL}/api/status/live") as resp:
                 if resp.status == 200:
                     data = await resp.json()
-                    print(f"✅ Status Endpoint Active. DB Latency: {data.get('db_latency_ms')}ms")
+                    print(f"✅ Status Endpoint Active. System Status: {data.get('status')}")
                 else:
                     print(f"❌ Status Endpoint Failed: {resp.status}")
         except Exception as e:
