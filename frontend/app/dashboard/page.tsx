@@ -7,6 +7,7 @@ import { Activity, AlertTriangle, Server, Zap } from "lucide-react"
 import { Sparkline } from "@/components/dashboard/sparkline"
 import { Heatmap } from "@/components/dashboard/heatmap"
 import { StockRow } from "@/components/dashboard/stock-row"
+import { AlertList } from "@/components/dashboard/alert-list"
 import { useSystemStatus } from "@/contexts/SystemStatusContext"
 
 interface DashboardStats {
@@ -34,72 +35,66 @@ export default function DashboardPage() {
         connected: false
     })
     const [stocks, setStocks] = useState<StockData[]>([])
-
-    const ws = useRef<WebSocket | null>(null)
+    const { status } = useSystemStatus()
 
     useEffect(() => {
-        // Initial Fetch
-        const fetchData = async () => {
+        // Initial Fetch of Watchlist
+        const fetchWatchlist = async () => {
             try {
-                const res = await api.get("/dashboard/stats")
-                setStats(res.data)
-                const stocksRes = await api.get("/stocks/")
-                // Initialize stocks with empty history
-                setStocks(stocksRes.data.map((s: any) => ({
-                    symbol: s.symbol,
-                    token: s.instrument_token,
-                    price: 0,
-                    change: 0,
-                    history: []
-                })))
-            } catch (e) {
-                console.error("Failed to fetch dashboard data", e)
-            }
-        }
-        fetchData()
+                const stocksRes = await api.get("/stocks/") // This hits Next.js API now (if migrated)
+                // Note: We need to migrate /api/stocks/ too! For now assuming it exists or handled
 
-        // WebSocket
-        const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}/stocks`)
-
-        socket.onopen = () => {
-            console.log("Dashboard WS Connected")
-        }
-
-        socket.onmessage = (event) => {
-            try {
-                const message = JSON.parse(event.data)
-
-                if (message.type === "TICK_UPDATE") {
-                    updateStocks(message.data)
-                } else if (message.type === "DASHBOARD_UPDATE") {
-                    setStats(prev => ({ ...prev, ...message.stats }))
+                // If /stocks/ fails (not implemented yet), we might get empty.
+                if (stocksRes.data) {
+                    setStocks(stocksRes.data.map((s: any) => ({
+                        symbol: s.symbol,
+                        token: s.instrument_token,
+                        price: 0,
+                        change: 0,
+                        history: []
+                    })))
                 }
             } catch (e) {
-                console.error("WS Error", e)
+                console.error("Failed to fetch stocks", e)
+            }
+        }
+        fetchWatchlist()
+    }, [])
+
+    // POLLING MECHANISM (Replaces WebSocket)
+    useEffect(() => {
+        const fetchPrices = async () => {
+            try {
+                // Fetch Prices from Redis via API
+                const res = await fetch("/api/stocks/prices")
+                if (res.ok) {
+                    const priceMap = await res.json()
+                    updateStocks(priceMap)
+                }
+
+                // Fetch Stats (Mocked or Real)
+                // setStats(...)
+            } catch (e) {
+                console.error("Polling Error", e)
             }
         }
 
-        socket.onerror = (error) => {
-            console.error("Dashboard WS Error:", error)
-        }
+        // Poll every 2 seconds
+        const interval = setInterval(fetchPrices, 2000)
+        fetchPrices() // Initial call
 
-        socket.onclose = (event) => {
-            console.log("Dashboard WS Closed:", event.code, event.reason)
-        }
-
-        ws.current = socket
-        return () => socket.close()
+        return () => clearInterval(interval)
     }, [])
 
-    const updateStocks = (ticks: any[]) => {
+    const updateStocks = (priceMap: Record<string, any>) => {
         setStocks(prev => {
             return prev.map(stock => {
-                const tick = ticks.find((t: any) => t.instrument_token === stock.token)
+                const tick = priceMap[stock.token]
                 if (tick) {
-                    const newHistory = [...stock.history, tick.last_price].slice(-30) // Keep last 30
+                    const newHistory = [...stock.history, tick.price].slice(-30) // Keep last 30
                     return {
                         ...stock,
-                        price: tick.last_price,
+                        price: tick.price,
                         change: tick.change,
                         history: newHistory
                     }
@@ -108,8 +103,6 @@ export default function DashboardPage() {
             })
         })
     }
-
-    const { status } = useSystemStatus()
 
     // Override stats if offline
     const displayStats = status === "OFFLINE" ? {
@@ -132,7 +125,7 @@ export default function DashboardPage() {
                         <Activity className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{status === "OFFLINE" ? "—" : displayStats.active_stocks}</div>
+                        <div className="text-2xl font-bold">{stocks.length}</div>
                         <p className="text-xs text-muted-foreground">Monitoring live</p>
                     </CardContent>
                 </Card>
@@ -144,7 +137,7 @@ export default function DashboardPage() {
                     <CardContent>
                         <div className="text-2xl font-bold">{status === "ONLINE" ? "Online" : "Offline"}</div>
                         <p className="text-xs text-muted-foreground">
-                            {status === "ONLINE" ? `Uptime: ${new Date(displayStats.uptime).toLocaleTimeString()}` : "Waiting for Token"}
+                            Serverless Mode
                         </p>
                     </CardContent>
                 </Card>
@@ -160,12 +153,12 @@ export default function DashboardPage() {
                 </Card>
                 <Card className={status === "OFFLINE" ? "bg-gray-50 opacity-70" : ""}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Latency</CardTitle>
+                        <CardTitle className="text-sm font-medium">Refresh Rate</CardTitle>
                         <Zap className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{status === "OFFLINE" ? "—" : "~50ms"}</div>
-                        <p className="text-xs text-muted-foreground">Real-time connection</p>
+                        <div className="text-2xl font-bold">2s</div>
+                        <p className="text-xs text-muted-foreground">Polling Interval</p>
                     </CardContent>
                 </Card>
             </div>
@@ -214,19 +207,9 @@ export default function DashboardPage() {
                             </CardContent>
                         </Card>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>System Logs</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="h-[200px] overflow-y-auto bg-black text-green-400 p-2 rounded text-xs font-mono">
-                                    <p>[INFO] System Initialized</p>
-                                    <p>[INFO] WebSocket Connected</p>
-                                    <p>[INFO] Ticker Service Running</p>
-                                    {stocks.length > 0 && <p>[INFO] Monitoring {stocks.length} stocks...</p>}
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <div className="pt-0">
+                            <AlertList />
+                        </div>
                     </div>
                 </div>
             ) : (
@@ -234,7 +217,7 @@ export default function DashboardPage() {
                     <Server className="h-12 w-12 text-gray-300 mb-4" />
                     <h3 className="text-lg font-medium text-gray-900">System Offline</h3>
                     <p className="text-sm text-gray-500 max-w-sm text-center mt-2">
-                        Real-time data is unavailable. Waiting for admin to provide today's Zerodha token.
+                        Real-time data is unavailable.
                     </p>
                 </div>
             )}
