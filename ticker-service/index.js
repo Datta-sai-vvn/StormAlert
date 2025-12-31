@@ -10,7 +10,7 @@ if (redisUrl && redisUrl.startsWith('redis://')) {
     redisUrl = redisUrl.replace('redis://', 'rediss://');
 }
 const redis = new Redis(redisUrl, {
-    family: 6, // Force IPv6 for Railway/Upstash compatibility if needed, or defaults
+    family: 0, // Auto-detect IPv4/IPv6 (Safer)
     tls: {
         rejectUnauthorized: false
     },
