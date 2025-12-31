@@ -3,7 +3,19 @@ const KiteTicker = require("kiteconnect").KiteTicker;
 const Redis = require("ioredis");
 
 // Initialize Redis Client (Upstash)
-const redis = new Redis(process.env.UPSTASH_REDIS_URL);
+// Initialize Redis Client (Upstash)
+// Force 'rediss://' (TLS) if it comes as 'redis://' for Upstash
+let redisUrl = process.env.UPSTASH_REDIS_URL;
+if (redisUrl && redisUrl.startsWith('redis://')) {
+    redisUrl = redisUrl.replace('redis://', 'rediss://');
+}
+const redis = new Redis(redisUrl, {
+    family: 6, // Force IPv6 for Railway/Upstash compatibility if needed, or defaults
+    tls: {
+        rejectUnauthorized: false
+    },
+    maxRetriesPerRequest: null
+});
 
 // Initialize Kite Ticker
 const ticker = new KiteTicker({
